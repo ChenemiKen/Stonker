@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+{% load static %}
+{% load cart_template_tags %}
+
+
+<html  lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %} Stonker | Base {% endblock %}</title>
+
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/custom/basestyle.css' %}" rel="stylesheet">
+
+
+    {% block extra_head %}
+    {% endblock %}
+  </head>
+  <body>
+    <div class="wrapper">
+      
+      <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary "><!-- Navbar -->
+        <div class="container-fluid">
+
+          <!-- Brand -->
+          <a class="navbar-brand waves-effect" href="#">
+            <img id="logo" alt="Logo" src="/static/img/stonkerlogo.jpeg" width="40" height="40">
+            <span><b>STONKER</b></span>
+          </a>
+
+          <!-- Collapse -->
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <!-- Links -->
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- Left -->
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link waves-effect" href="{% url 'home'%}">Home
+                  <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link waves-effect" href="#">Our Services</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link waves-effect" href="#">About</a>
+              </li>
+              {% if user.is_authenticated %}
+                
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link waves-effect" href="{% url 'account_signup' %}">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link waves-effect" href="{% url 'account_login' %}">Sign In</a>
+                </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link waves-effect" href="#">Contact</a>
+              </li>
+            </ul>
+
+            <!-- Right -->
+            <ul class="navbar-nav nav-flex-icons">
+              <li class="nav-item">
+                <a href="{% url 'ordersummary' %}" class="nav-link border border-light rounded waves-effect">
+                  <span class="badge red z-depth-1 mr-1">{{request|cart_item_count}}</span>
+                  <i class="fas fa-shopping-cart"></i>
+                  <span class="clearfix d-none d-sm-inline-block"> Cart </span>
+                </a>
+              </li>
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link waves-effect" data-toggle="modal" data-target="#logoutconfirmmodal">Sign Out</a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav><!-- Navbar -->
+      
+      <!--Messages-->
+      <div class='message container' style="position:absolute; z-index:200;" >
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{message.tags}} alert-dismissible">
+              {{message}}
+              <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <!--/ Messages-->
+      
+      <!--Logout modal-->
+      <div class="modal fade top" id="logoutconfirmmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog modal-dialog-centered modal-notify modal-danger" role="document">
+          <!--Content-->
+          <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header">
+              <p class="heading">Sign Out </p>
+
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="white-text">&times;</span>
+              </button>
+            </div>
+            <!--Body-->
+            <div class="modal-body">
+              <div class="container col-md-8 offset-2">
+                <p> Are you sure you want to sign out? </p>
+                <form method="post" action="{% url 'account_logout' %}">
+                  {% csrf_token %}
+                  {% if redirect_field_value %}
+                  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                  {% endif %}
+                  <button class="btn btn-danger rounded" type="submit" > Sign Out </button>
+                </form> 
+              </div>            
+            </div>
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+              <a type="button" class="btn btn-default" data-dismiss="modal">Cancel</a>
+            </div>
+          </div>
+          <!--/.Content-->
+        </div>
+      </div>
+      <!--/ Logout modal-->
+
+      {% block content %}
+      {% endblock %}
+    </div>
+
+    <!--Page Footer-->
+    <footer class="footer page-footer text-center font-small mt-4 wow fadeIn"> 
+      <hr class="">
+      <!-- Social icons -->
+      <div class="pb-4">
+        <a href="https://www.facebook.com/mdbootstrap" target="_blank">
+          <i class="fab fa-facebook-f mr-3"></i>
+        </a>
+
+        <a href="https://twitter.com/MDBootstrap" target="_blank">
+          <i class="fab fa-twitter mr-3"></i>
+        </a>
+
+        <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
+          <i class="fab fa-youtube mr-3"></i>
+        </a>
+
+        <a href="https://plus.google.com/u/0/b/107863090883699620484" target="_blank">
+          <i class="fab fa-google-plus-g mr-3"></i>
+        </a>
+
+        <a href="https://dribbble.com/mdbootstrap" target="_blank">
+          <i class="fab fa-dribbble mr-3"></i>
+        </a>
+
+        <a href="https://pinterest.com/mdbootstrap" target="_blank">
+          <i class="fab fa-pinterest mr-3"></i>
+        </a>
+
+        <a href="https://github.com/mdbootstrap/bootstrap-material-design" target="_blank">
+          <i class="fab fa-github mr-3"></i>
+        </a>
+
+        <a href="http://codepen.io/mdbootstrap/" target="_blank">
+          <i class="fab fa-codepen mr-3"></i>
+        </a>
+      </div>
+      <!-- Social icons -->
+      <!--Copyright-->
+      <div class="footer-copyright py-3">
+        © 2019 Copyright:
+        <a href="#" target="_blank"> Stonker.com </a>
+      </div>
+      <!--/.Copyright-->
+    </footer> 
+    <!--/Page Footer-->
+    
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
+    <!-- Initializations -->
+    <script type="text/javascript">
+      // Animations initialization
+      new WOW().init();
+    </script>
+    {% block extra_scripts %}
+    {% endblock %}
+    {% block extra_body %}
+    {% endblock %}
+  </body>
+</html>
